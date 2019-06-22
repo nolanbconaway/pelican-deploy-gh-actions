@@ -13,9 +13,15 @@ action "Pipenv" {
   }
 }
 
+action "Theme Install" {
+  args = "git clone --recursive https://github.com/getpelican/pelican-themes themes"
+  uses = "jefftriplett/python-actions@master"
+  needs = ["Pipenv"]
+}
+
 action "Deploy" {
   args = "./deploy-to-gh-pages.sh"
   uses = "jefftriplett/python-actions@master"
-  needs = ["Pipenv"]
+  needs = ["Theme Install"]
   secrets = ["ACCESS_TOKEN"]
 }
