@@ -1,7 +1,7 @@
 workflow "Build" {
   on = "push"
   resolves = [
-    "Pipenv",
+    "Deploy",
   ]
 }
 
@@ -17,7 +17,13 @@ action "Upgrade Pip" {
 }
 
 action "Pipenv" {
-  args = " pip install pipenv && pipenv install"
+  args = "pip install pipenv && pipenv install"
   uses = "jefftriplett/python-actions@master"
   needs = ["Upgrade Pip"]
+}
+
+action "Deploy" {
+  args = "./deploy-to-gh-pages.sh"
+  uses = "jefftriplett/python-actions@master"
+  needs = ["Pipenv"]
 }
