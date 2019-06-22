@@ -1,5 +1,7 @@
 Title: Pelican Quickstart
 
+This is a copy of the `pelican-quickstart` prompt I used to generate the site.
+
 ```sh
 $ pelican-quickstart
 
