@@ -11,7 +11,6 @@ action "Pipenv" {
   env = {
     PIPENV_VENV_IN_PROJECT = "true"
   }
-  needs = ["Upgrade Pip"]
 }
 
 action "Deploy" {
