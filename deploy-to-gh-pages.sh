@@ -1,35 +1,52 @@
 #!/bin/bash
 
-set -e
+if [ -z "$ACCESS_TOKEN" ]
+then
+  echo "No access token!"
+  exit 1
+fi
 
-# lots copied from https://github.com/nelsonjchen/gh-pages-pelican-action
+BRANCH='gh-pages'
+COMMIT_EMAIL="${GITHUB_ACTOR}@users.noreply.github.com"
+REPOSITORY_PATH="https://${ACCESS_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+
+echo '----- Deploy Settings -----'
 
 echo "REPO: $GITHUB_REPOSITORY"
 echo "ACTOR: $GITHUB_ACTOR"
+echo "BRANCH: $BRANCH"
+echo "COMMIT_EMAIL: $COMMIT_EMAIL"
 
+
+echo '----- Configuring git -----'
+git init && \
+git config --global user.email "${COMMIT_EMAIL}" && \
+git config --global user.name "${GITHUB_ACTOR}"
+
+
+echo "----- Checking on $BRANCH branch -----"
+if [ "$(git ls-remote --heads "$REPOSITORY_PATH" "$BRANCH" | wc -l)" -eq 0 ];
+then
+  echo "Creating remote branch ${BRANCH} as it doesn't exist..."
+  git checkout "${BASE_BRANCH:-master}" && \
+  git checkout --orphan $BRANCH && \
+  git rm -rf . && \
+  echo 'just creating the branch...' > README.md && \
+  git add README.md && \
+  git commit -m "Initial ${BRANCH} commit" && \
+  git push $REPOSITORY_PATH $BRANCH
+fi
+
+git checkout "${BASE_BRANCH:-master}"
 
 echo '----- Making HTML -----'
 make html
-cd output
 
+echo '----- Deploying -----'
 
-echo '----- Generating git branch -----'
-remote_repo="git@github.com:${GITHUB_REPOSITORY}.git"
-git init
-git remote add deploy "$remote_repo"
-git checkout $remote_branch || git checkout --orphan $remote_branch
-git config user.name "${GITHUB_ACTOR}"
-git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-git add .
-echo -n 'Files to Commit:' && ls -l | wc -l
-timestamp=$(date +%s%3N)
+git add -f output/
+git commit -m "Deploying to ${BRANCH} - $(date +"%T")" && \
+git push $REPOSITORY_PATH `git subtree split --prefix $FOLDER ${BASE_BRANCH:-master}`:$BRANCH --force && \
 
-
-echo '----- Commiting files, deploying -----'
-git commit -m "[ci skip] Automated deployment to GitHub Pages on $timestamp"
-git push deploy $remote_branch --force
-rm -fr .git
-cd ../
-
-
-echo '----- Done -----'
+echo "Deployment succesful!"
