@@ -1,4 +1,6 @@
-Title: Pelican Quickstart
+Title: Initial Site Setup
+
+## First, run quickstart
 
 This is a copy of the `pelican-quickstart` prompt I used to generate the site.
 
@@ -33,3 +35,33 @@ Using project associated with current virtual environment.Will save to:
 Done. Your new project is available at /Users/nolan/Desktop/pelican-deploy-gh-actions
 ```
 
+## Second, enable relative urls in `publishconf.py`
+
+If you are not publishing to your base `username.github.io` repo, then you'll want to set `RELATIVE_URLS = True`
+in the `publishconf.py` file which was generated during pelican-quickstart. 
+Otherwise, the urls generated will have a base of `/` instead of a base of `/project/`.
+
+My file now looks like:
+
+```python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- #
+from __future__ import unicode_literals
+
+# This file is only used if you use `make publish` or
+# explicitly specify it as your config file.
+
+import os
+import sys
+sys.path.append(os.curdir)
+from pelicanconf import *
+
+# If your site is available via HTTPS, make sure SITEURL begins with https://
+SITEURL = ''
+RELATIVE_URLS = True
+
+FEED_ALL_ATOM = 'feeds/all.atom.xml'
+CATEGORY_FEED_ATOM = 'feeds/{slug}.atom.xml'
+
+DELETE_OUTPUT_DIRECTORY = True
+```
