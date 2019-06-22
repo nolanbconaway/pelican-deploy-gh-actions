@@ -6,7 +6,7 @@ then
   exit 1
 fi
 
-FOLER='output'
+FOLDER='output'
 BASE_BRANCH='master'
 BRANCH='gh-pages'
 COMMIT_EMAIL="${GITHUB_ACTOR}@users.noreply.github.com"
