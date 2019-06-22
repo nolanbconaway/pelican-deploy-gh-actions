@@ -12,4 +12,3 @@ ENV PYTHONUNBUFFERED 1
 COPY LICENSE README.md entrypoint.sh /
 
 ENTRYPOINT [ "/entrypoint.sh" ]
-CMD [ "--help" ]
