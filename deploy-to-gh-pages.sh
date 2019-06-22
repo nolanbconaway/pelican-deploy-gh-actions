@@ -6,6 +6,7 @@ then
   exit 1
 fi
 
+FOLER='output'
 BASE_BRANCH='master'
 BRANCH='gh-pages'
 COMMIT_EMAIL="${GITHUB_ACTOR}@users.noreply.github.com"
@@ -50,8 +51,7 @@ make html
 
 
 echo '----- Deploying -----'
-
-git add -f output/ && \
+git add -f $FOLDER && \
 git commit -m "Deploy to ${BRANCH} - $(date +"%T")" && \
 git push $REPOSITORY_PATH `git subtree split --prefix $FOLDER $BASE_BRANCH`:$BRANCH --force
 
