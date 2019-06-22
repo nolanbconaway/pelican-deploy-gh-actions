@@ -8,7 +8,7 @@ I want to get a static site auto deployed to github pages via actions.
 
 ## Todo
 
-- [ ] set up theme
+- [x] set up theme
 - [x] configuration instructions following quickstart
 - [ ] explainer on the deployment workflow
 - [ ] tests?
