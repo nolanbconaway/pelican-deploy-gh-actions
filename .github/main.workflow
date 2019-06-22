@@ -7,5 +7,5 @@ workflow "Build" {
 
 action "Pipenv" {
   args = "pip install pipenv && pipenv install"
-  uses = "./action/"
+  uses = "jefftriplett/python-actions@master"
 }
