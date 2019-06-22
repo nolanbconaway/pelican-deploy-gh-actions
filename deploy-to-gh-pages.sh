@@ -47,7 +47,7 @@ git checkout "$BASE_BRANCH"
 
 
 echo '----- Making HTML -----'
-make html
+make publish
 
 
 echo '----- Deploying -----'
