@@ -5,7 +5,14 @@ workflow "Build" {
   ]
 }
 
-action "Pipenv" {
-  args = "pip install pipenv && pipenv install"
+action "Pipenv Install" {
+  args = "install"
   uses = "jpeaceiris/actions-pipenv@3.7"
+}
+
+action "Another Command" {
+  args = "echo done"
+  uses = "jpeaceiris/actions-pipenv@3.7"
+  needs = ["Pipenv Install"]
+
 }
