@@ -14,10 +14,13 @@ REPOSITORY_PATH="https://${ACCESS_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 
 echo '----- Deploy Settings -----'
 
-echo "REPO: $GITHUB_REPOSITORY"
-echo "ACTOR: $GITHUB_ACTOR"
-echo "BRANCH: $BRANCH"
-echo "COMMIT_EMAIL: $COMMIT_EMAIL"
+echo "* REPO: $GITHUB_REPOSITORY"
+echo "* ACTOR: $GITHUB_ACTOR"
+echo "* BRANCH: $BRANCH"
+echo "* BASE_BRANCH: $BASE_BRANCH"
+echo "* COMMIT_EMAIL: $COMMIT_EMAIL"
+echo "* GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
+echo "* FOLDER: $FOLDER"
 
 
 echo '----- Configuring git -----'
