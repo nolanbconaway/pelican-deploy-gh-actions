@@ -21,6 +21,6 @@ action "Theme Install" {
 action "Deploy" {
   args = "./deploy-to-gh-pages.sh"
   uses = "jefftriplett/python-actions@master"
-  needs = ["Theme Install"]
+  needs = ["Pipenv", "Theme Install"]
   secrets = ["ACCESS_TOKEN"]
 }
