@@ -5,13 +5,8 @@ workflow "Build" {
   ]
 }
 
-action "Upgrade Pip" {
-  args = "pip install --upgrade pip"
-  uses = "jefftriplett/python-actions@master"
-}
-
 action "Pipenv" {
-  args = "pip install pipenv && pipenv install"
+  args = "pip install --upgrade pip && pip install pipenv && pipenv install"
   uses = "jefftriplett/python-actions@master"
   env = {
     PIPENV_VENV_IN_PROJECT = "true"

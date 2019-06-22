@@ -30,7 +30,7 @@ echo "----- Checking on $BRANCH branch -----"
 if [ "$(git ls-remote --heads "$REPOSITORY_PATH" "$BRANCH" | wc -l)" -eq 0 ];
 then
   echo "Creating remote branch ${BRANCH} as it doesn't exist..."
-  git checkout "${BASE_BRANCH:-master}" && \
+  git checkout "$BASE_BRANCH" && \
   git checkout --orphan $BRANCH && \
   git rm -rf . && \
   echo 'just creating the branch...' > README.md && \
@@ -39,7 +39,7 @@ then
   git push $REPOSITORY_PATH $BRANCH
 fi
 
-git checkout "${BASE_BRANCH:-master}"
+git checkout "$BASE_BRANCH"
 
 
 echo '----- Making HTML -----'
@@ -48,9 +48,9 @@ make html
 
 echo '----- Deploying -----'
 
-git add -f output/
-git commit -m "Deploying to ${BRANCH} - $(date +"%T")" && \
-git push $REPOSITORY_PATH `git subtree split --prefix $FOLDER ${BASE_BRANCH:-master}`:$BRANCH --force && \
+git add -f output/ && \
+git commit -m "Deploy to ${BRANCH} - $(date +"%T")" && \
+git push $REPOSITORY_PATH `git subtree split --prefix $FOLDER $BASE_BRANCH`:$BRANCH --force
 
 
 echo "Deployment succesful!"
