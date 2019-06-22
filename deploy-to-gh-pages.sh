@@ -40,13 +40,16 @@ fi
 
 git checkout "${BASE_BRANCH:-master}"
 
+
 echo '----- Making HTML -----'
 make html
+
 
 echo '----- Deploying -----'
 
 git add -f output/
 git commit -m "Deploying to ${BRANCH} - $(date +"%T")" && \
 git push $REPOSITORY_PATH `git subtree split --prefix $FOLDER ${BASE_BRANCH:-master}`:$BRANCH --force && \
+
 
 echo "Deployment succesful!"
