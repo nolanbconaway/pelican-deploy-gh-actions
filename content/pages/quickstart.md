@@ -17,7 +17,7 @@ Using project associated with current virtual environment.Will save to:
 /Users/nolan/Desktop/pelican-deploy-gh-actions
 
 > What will be the title of this web site? Pelican GH Action Deploy Demo
-> Who will be the author of this web site? Nolan
+> Who will be the author of this web site? Nolan Conaway
 > What will be the default language of this web site? [en] 
 > Do you want to specify a URL prefix? e.g., https://example.com   (Y/n) n
 > Do you want to enable article pagination? (Y/n) n
@@ -28,7 +28,8 @@ Using project associated with current virtual environment.Will save to:
 > Do you want to upload your website using Dropbox? (y/N) n
 > Do you want to upload your website using S3? (y/N) n
 > Do you want to upload your website using Rackspace Cloud Files? (y/N) n
-> Do you want to upload your website using GitHub Pages? (y/N) n
+> Do you want to upload your website using GitHub Pages? (y/N) y
+> Is this your personal page (username.github.io)? (y/N) n
 Done. Your new project is available at /Users/nolan/Desktop/pelican-deploy-gh-actions
 ```
 

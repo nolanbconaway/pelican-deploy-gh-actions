@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
 
-AUTHOR = 'Nolan'
+AUTHOR = 'Nolan Conaway'
 SITENAME = 'Pelican GH Action Deploy Demo'
 SITEURL = ''
 
