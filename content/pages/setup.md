@@ -1,5 +1,8 @@
 Title: Initial Site Setup
 
+This page explains what is needed to generate the initial site config so that it is compatible with
+github pages.
+
 ## First, run quickstart
 
 This is a copy of the `pelican-quickstart` prompt I used to generate the site.

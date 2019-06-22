@@ -1,16 +1,15 @@
 Title: Theme setup
 
-As of now, the built-in theming utilities for pelican are weirdly dependent on files and folders external to the site repo. For example, using the `pelican-themes` tool allows you to install themes to an external directory (e.g., `~/pelican-themes`), which you then reference using the `THEME` variable in your settings file like `THEME = 'path/to/theme`.
+As of now, the built-in theming utilities for pelican are weirdly dependent on files and folders external to the site repo. For example, the `pelican-themes` tool allows you to install themes to an external directory (e.g., `~/pelican-themes`), which you then reference using the `THEME` variable in your settings file like `THEME = '~/pelican-themes/theme`.
 
 This is problematic for a Github deployment, since you'll need to install the theme in the same spot when deploying. Here's one way to do it.
 
 
 ## Install the theme to your repo
 
-The approach I am going to take is to assume the theme is available at the top level directory of your repo. 
-During deployment we can install to the same place and it should all come together nicely.
+The approach I am going to take is to store the theme at the top level directory of your repo. During deployment we can install to the same place and it should all come together nicely.
 
-I am going to a theme within use the large collection of pelican themes available [here](https://github.com/getpelican/pelican-themes). 
+I am going to use a theme within the large collection of pelican themes available [here](https://github.com/getpelican/pelican-themes). 
 
 Clone the whole repo to a folder at the top level of your repo:
 
