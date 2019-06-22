@@ -7,5 +7,5 @@ workflow "Build" {
 
 action "Pipenv" {
   args = "pip install pipenv && pipenv install"
-  uses = "jefftriplett/python-actions@master"
+  uses = "jpeaceiris/actions-pipenv@3.7"
 }
