@@ -58,3 +58,18 @@ DEFAULT_PAGINATION = False
 
 THEME = 'themes/blue-penguin'
 ```
+
+## Deployment
+
+In the main.workflow file, you can see I added a theme install action like
+
+
+```
+action "Theme Install" {
+  args = "git clone --recursive https://github.com/getpelican/pelican-themes themes"
+  uses = "jefftriplett/python-actions@master"
+  needs = ["Pipenv"]
+}
+```
+
+Deployment is dependent on that action, so the themes should be in place.
