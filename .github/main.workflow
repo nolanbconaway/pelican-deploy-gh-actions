@@ -26,4 +26,5 @@ action "Deploy" {
   args = "./deploy-to-gh-pages.sh"
   uses = "jefftriplett/python-actions@master"
   needs = ["Pipenv"]
+  secrets = ["ACCESS_TOKEN"]
 }

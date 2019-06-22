@@ -6,6 +6,7 @@ then
   exit 1
 fi
 
+BASE_BRANCH='master'
 BRANCH='gh-pages'
 COMMIT_EMAIL="${GITHUB_ACTOR}@users.noreply.github.com"
 REPOSITORY_PATH="https://${ACCESS_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
