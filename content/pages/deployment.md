@@ -40,7 +40,7 @@ Github actions uses Docker containerization at basically every step. The idea is
 run arbitrary commands within it to do whatever you want. In this case, we're using it to generate the static site 
 using Pelican and store that in the `gh-pages` branch of the repo.
 
-There's a whole [marketplace](https://github.com/marketplace?type=actions) of Github action docker contaiers, including an [action to publish a static site to github pages](https://github.com/JamesIves/github-pages-deploy-action)! I wanted to learn how this worked, so I opted to start with with a generic python container and to write my own scripts on top of it (borrowing heavily from published actions).
+There's a whole [marketplace](https://github.com/marketplace?type=actions) of Github action docker containers, including an [action to publish a static site to Github pages](https://github.com/JamesIves/github-pages-deploy-action)! I wanted to learn how this worked, so I opted to start with with a generic python container and to write my own scripts on top of it (borrowing heavily from published actions).
 
 Above, you can see I am using an action specified by the `uses` clause, [jefftriplett/python-actions@master](https://github.com/jefftriplett/python-actions), which provides a python 3.6 enviornment with all the basics (pip, git, etc). The Dockerfile's entry point is `sh -c "$*"`, so we can pass in arbitrary shell commands to it.
 
