@@ -22,6 +22,7 @@ action "Pipenv" {
 action "Theme Install" {
   args = "git clone --recursive https://github.com/getpelican/pelican-themes themes"
   uses = "jefftriplett/python-actions@master"
+  needs = ["Pipenv"]
 }
 
 action "Deploy" {
@@ -62,9 +63,7 @@ I've broken that down into three stages. Graphically:
 
 ![]({filename}/images/workflow.png)
 
-That's a graphical representation of the workflow I pasted above. Installation of the pipenv and the themes can proceed in in parallel, but both are required for the deployment step. 
-
-You can see that the deployment step also requires a secret, `ACCESS_KEY`. This is because we'll be committing changes to a branch of the source repository. This is accomplished by [creating a new personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) and then adding it as a secret to your repository (settings -> secrets -> add a new secret).
+That's a graphical representation of the workflow I pasted above. You can see that the deployment step also requires a secret, `ACCESS_KEY`. This is because we'll be committing changes to a branch of the source repository. This is accomplished by [creating a new personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) and then adding it as a secret to your repository (settings -> secrets -> add a new secret).
 
 
 ### deploy-to-gh-pages.sh
