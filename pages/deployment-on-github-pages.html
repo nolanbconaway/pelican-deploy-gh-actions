@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Pelican GH Action Deploy Demo | Deployment on Github Pages</title>
+    <link rel="shortcut icon" type="image/png" href="../favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
+    <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Pelican GH Action Deploy Demo Full Atom Feed" />
+    <link rel="stylesheet" href="../theme/css/screen.css" type="text/css" />
+    <link rel="stylesheet" href="../theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../theme/css/print.css" type="text/css" media="print" />
+    <meta name="generator" content="Pelican" />
+    <meta name="description" content="" />
+    <meta name="author" content="Nolan Conaway" />
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="../">Home</a></li>
+                <li class="selected"><a href="../pages/deployment-on-github-pages.html">Deployment on Github Pages</a></li>
+                <li><a href="../pages/initial-site-setup.html">Initial Site Setup</a></li>
+                <li><a href="../pages/theme-setup.html">Theme setup</a></li>
+            </ul>
+        </nav>
+        <div class="header_box">
+            <h1><a href="../">Pelican GH Action Deploy Demo</a></h1>
+        </div>
+    </header>
+    <div id="wrapper">
+        <div id="content">
+            <div class="page">
+                <h1>Deployment on Github Pages</h1>
+                <p>I have used the Github Actions (right now in beta) to deploy the static site produced by Pelican to
+the github-pages branch of this repo. Here is the workflow:</p>
+<div class="highlight"><pre><span></span><span class="n">workflow</span><span class="w"> </span><span class="ss">&quot;Build&quot;</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<span class="w">  </span><span class="k">on</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;push&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="n">resolves</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n"></span>
+<span class="n">    &quot;Deploy&quot;,</span>
+<span class="n">  </span><span class="o">]</span><span class="w"></span>
+<span class="err">}</span><span class="w"></span>
+
+<span class="k">action</span><span class="w"> </span><span class="ss">&quot;Pipenv&quot;</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;pip install --upgrade pip &amp;&amp; pip install pipenv &amp;&amp; pipenv install&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="n">uses</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;jefftriplett/python-actions@master&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="n">env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">PIPENV_VENV_IN_PROJECT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;true&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="err">}</span><span class="w"></span>
+<span class="err">}</span><span class="w"></span>
+
+<span class="k">action</span><span class="w"> </span><span class="ss">&quot;Theme Install&quot;</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;git clone --recursive https://github.com/getpelican/pelican-themes themes&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="n">uses</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;jefftriplett/python-actions@master&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="n">needs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n">&quot;Pipenv&quot;</span><span class="o">]</span><span class="w"></span>
+<span class="err">}</span><span class="w"></span>
+
+<span class="k">action</span><span class="w"> </span><span class="ss">&quot;Deploy&quot;</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;./deploy-to-gh-pages.sh&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="n">uses</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;jefftriplett/python-actions@master&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="n">needs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n">&quot;Pipenv&quot;, &quot;Theme Install&quot;</span><span class="o">]</span><span class="w"></span>
+<span class="w">  </span><span class="n">secrets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n">&quot;ACCESS_TOKEN&quot;</span><span class="o">]</span><span class="w"></span>
+<span class="err">}</span><span class="w"></span>
+</pre></div>
+
+
+<p>This page is an explainer on how all of that comes together.</p>
+<h3>The Dockerfile</h3>
+<p>Github actions uses Docker containerization at basically every step. The idea is that you build a container and can
+run arbitrary commands within it to do whatever you want. In this case, we're using it to generate the static site 
+using Pelican and store that in the <code>gh-pages</code> branch of the repo.</p>
+<p>There's a whole <a href="https://github.com/marketplace?type=actions">marketplace</a> of Github action docker containers, including an <a href="https://github.com/JamesIves/github-pages-deploy-action">action to publish a static site to Github pages</a>! I wanted to learn how this worked, so I opted to start with with a generic python container and to write my own scripts on top of it (borrowing heavily from published actions).</p>
+<p>Above, you can see I am using an action specified by the <code>uses</code> clause, <a href="https://github.com/jefftriplett/python-actions">jefftriplett/python-actions@master</a>, which provides a python 3.6 enviornment with all the basics (pip, git, etc). The Dockerfile's entry point is <code>sh -c "$*"</code>, so we can pass in arbitrary shell commands to it.</p>
+<h3>The Workflow</h3>
+<p>In the end, we want to have a copy of the static site committed to the <code>gh-pages</code> branch of this repo. To do that, we need do install Pelican and all the other python requirements. We also need copy over the site theme to the top level of the repo.</p>
+<p>I'm using Pipenv to handle requirements, and to <code>pipenv install</code> we need to have installed pipenv already.</p>
+<p>So the steps taken are:</p>
+<ol>
+<li>Install pipenv: <code>pip install pipenv</code>.</li>
+<li>Install the site requirements: <code>pipenv install</code>.</li>
+<li>Install the theme to the correct place: <code>git clone --recursive https://github.com/getpelican/pelican-themes themes</code></li>
+<li>Build a copy of the static site: <code>make publish</code></li>
+<li>Commit the static site files to the <code>gh-pages</code> branch, which Github will kindly auto-deploy.</li>
+</ol>
+<p>I've broken that down into three stages. Graphically:</p>
+<p><img alt="" src="../images/workflow.png"></p>
+<p>That's a graphical representation of the workflow I pasted above. You can see that the deployment step also requires a secret, <code>ACCESS_KEY</code>. This is because we'll be committing changes to a branch of the source repository. This is accomplished by <a href="https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line">creating a new personal access token</a> and then adding it as a secret to your repository (settings -&gt; secrets -&gt; add a new secret).</p>
+<h3>deploy-to-gh-pages.sh</h3>
+<p>This is where a lot of the complexity lives. It has access to an env variable secret, <code>ACCESS_KEY</code>, and is a shell script included as a part of the repository which is executed after running the following two commands:</p>
+<ol>
+<li><code>pip install --upgrade pip &amp;&amp; pip install pipenv &amp;&amp; pipenv install</code></li>
+<li><code>git clone --recursive https://github.com/getpelican/pelican-themes themes</code></li>
+</ol>
+<p>Those are also shell commands, so theoretically they could have been included as a part of this script. The only reason they were not is because they might also be used as prior steps for some other action we might write in the future (no matter what, you'll always want your pipenv set up!).</p>
+<p>So that's the context this script is running in. Here's the script:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;</span><span class="nv">$ACCESS_TOKEN</span><span class="s2">&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="nb">echo</span> <span class="s2">&quot;No access token!&quot;</span>
+<span class="nb">exit</span> <span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="nv">FOLDER</span><span class="o">=</span><span class="s1">&#39;output&#39;</span>
+<span class="nv">BASE_BRANCH</span><span class="o">=</span><span class="s1">&#39;master&#39;</span>
+<span class="nv">BRANCH</span><span class="o">=</span><span class="s1">&#39;gh-pages&#39;</span>
+<span class="nv">COMMIT_EMAIL</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">GITHUB_ACTOR</span><span class="si">}</span><span class="s2">@users.noreply.github.com&quot;</span>
+<span class="nv">REPOSITORY_PATH</span><span class="o">=</span><span class="s2">&quot;https://</span><span class="si">${</span><span class="nv">ACCESS_TOKEN</span><span class="si">}</span><span class="s2">@github.com/</span><span class="si">${</span><span class="nv">GITHUB_REPOSITORY</span><span class="si">}</span><span class="s2">.git&quot;</span>
+
+
+<span class="nb">echo</span> <span class="s1">&#39;----- Deploy Settings -----&#39;</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;* REPO: </span><span class="nv">$GITHUB_REPOSITORY</span><span class="s2">&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;* ACTOR: </span><span class="nv">$GITHUB_ACTOR</span><span class="s2">&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;* BRANCH: </span><span class="nv">$BRANCH</span><span class="s2">&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;* BASE_BRANCH: </span><span class="nv">$BASE_BRANCH</span><span class="s2">&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;* COMMIT_EMAIL: </span><span class="nv">$COMMIT_EMAIL</span><span class="s2">&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;* GITHUB_REPOSITORY: </span><span class="nv">$GITHUB_REPOSITORY</span><span class="s2">&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;* FOLDER: </span><span class="nv">$FOLDER</span><span class="s2">&quot;</span>
+
+
+<span class="nb">echo</span> <span class="s1">&#39;----- Configuring git -----&#39;</span>
+git init <span class="o">&amp;&amp;</span> <span class="se">\</span>
+git config --global user.email <span class="s2">&quot;</span><span class="si">${</span><span class="nv">COMMIT_EMAIL</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+git config --global user.name <span class="s2">&quot;</span><span class="si">${</span><span class="nv">GITHUB_ACTOR</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="nb">echo</span> <span class="s2">&quot;----- Checking on </span><span class="nv">$BRANCH</span><span class="s2"> branch -----&quot;</span>
+<span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;</span><span class="k">$(</span>git ls-remote --heads <span class="s2">&quot;</span><span class="nv">$REPOSITORY_PATH</span><span class="s2">&quot;</span> <span class="s2">&quot;</span><span class="nv">$BRANCH</span><span class="s2">&quot;</span> <span class="p">|</span> wc -l<span class="k">)</span><span class="s2">&quot;</span> -eq <span class="m">0</span> <span class="o">]</span><span class="p">;</span>
+<span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&quot;Creating remote branch </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span><span class="s2"> as it doesn&#39;t exist...&quot;</span>
+    git checkout <span class="s2">&quot;</span><span class="nv">$BASE_BRANCH</span><span class="s2">&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    git checkout --orphan <span class="nv">$BRANCH</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    git rm -rf . <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    <span class="nb">echo</span> <span class="s1">&#39;just creating the branch...&#39;</span> &gt; README.md <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    git add README.md <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    git commit -m <span class="s2">&quot;Initial </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span><span class="s2"> commit&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    git push <span class="nv">$REPOSITORY_PATH</span> <span class="nv">$BRANCH</span>
+<span class="k">fi</span>
+
+git checkout <span class="s2">&quot;</span><span class="nv">$BASE_BRANCH</span><span class="s2">&quot;</span>
+
+
+<span class="nb">echo</span> <span class="s1">&#39;----- Making HTML -----&#39;</span>
+make publish
+
+
+<span class="nb">echo</span> <span class="s1">&#39;----- Deploying -----&#39;</span>
+git add -f <span class="nv">$FOLDER</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+git commit -m <span class="s2">&quot;Deploy to </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span><span class="s2"> - </span><span class="k">$(</span>date +<span class="s2">&quot;%T&quot;</span><span class="k">)</span><span class="s2">&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+git push <span class="nv">$REPOSITORY_PATH</span> <span class="sb">`</span>git subtree split --prefix <span class="nv">$FOLDER</span> <span class="nv">$BASE_BRANCH</span><span class="sb">`</span>:<span class="nv">$BRANCH</span> --force
+
+
+<span class="nb">echo</span> <span class="s2">&quot;Deployment succesful!&quot;</span>
+</pre></div>
+</td></tr></table>
+
+<p>You can see that most of the work is done with various <code>git</code> commands which probably nobody will ever understand. I'll break it down and explain as much as I understand (not a lot).</p>
+<h4>Configuring git</h4>
+<div class="highlight"><pre><span></span>git init <span class="o">&amp;&amp;</span> <span class="se">\</span>
+git config --global user.email <span class="s2">&quot;</span><span class="si">${</span><span class="nv">COMMIT_EMAIL</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+git config --global user.name <span class="s2">&quot;</span><span class="si">${</span><span class="nv">GITHUB_ACTOR</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+
+
+<p>Remember that this is running in a newly-created docker container, it doesn't know about your git settings
+so we need to set that up.</p>
+<h4>Create the gh-pages branch</h4>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;</span><span class="k">$(</span>git ls-remote --heads <span class="s2">&quot;</span><span class="nv">$REPOSITORY_PATH</span><span class="s2">&quot;</span> <span class="s2">&quot;</span><span class="nv">$BRANCH</span><span class="s2">&quot;</span> <span class="p">|</span> wc -l<span class="k">)</span><span class="s2">&quot;</span> -eq <span class="m">0</span> <span class="o">]</span><span class="p">;</span>
+<span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&quot;Creating remote branch </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span><span class="s2"> as it doesn&#39;t exist...&quot;</span>
+    git checkout <span class="s2">&quot;</span><span class="nv">$BASE_BRANCH</span><span class="s2">&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    git checkout --orphan <span class="nv">$BRANCH</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    git rm -rf . <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    <span class="nb">echo</span> <span class="s1">&#39;just creating the branch...&#39;</span> &gt; README.md <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    git add README.md <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    git commit -m <span class="s2">&quot;Initial </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span><span class="s2"> commit&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    git push <span class="nv">$REPOSITORY_PATH</span> <span class="nv">$BRANCH</span>
+<span class="k">fi</span>
+
+git checkout <span class="s2">&quot;</span><span class="nv">$BASE_BRANCH</span><span class="s2">&quot;</span>
+</pre></div>
+
+
+<p>This part checks if the gh-pages branch exists. If not, it is created with a single committed file, README.md. At the end we checkout the base branch, master, because we'll need to generate the static site.</p>
+<h4>Making the static site</h4>
+<div class="highlight"><pre><span></span>make publish
+</pre></div>
+
+
+<p>This just uses the Makefile that was created during <code>pelican-quickstart</code> to generate a production ready website within a directory called <code>output</code>.</p>
+<h4>Deployment</h4>
+<div class="highlight"><pre><span></span>git add -f <span class="nv">$FOLDER</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+git commit -m <span class="s2">&quot;Deploy to </span><span class="si">${</span><span class="nv">BRANCH</span><span class="si">}</span><span class="s2"> - </span><span class="k">$(</span>date +<span class="s2">&quot;%T&quot;</span><span class="k">)</span><span class="s2">&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+git push <span class="nv">$REPOSITORY_PATH</span> <span class="sb">`</span>git subtree split --prefix <span class="nv">$FOLDER</span> <span class="nv">$BASE_BRANCH</span><span class="sb">`</span>:<span class="nv">$BRANCH</span> --force
+</pre></div>
+
+
+<p>The first two lines here are the usual git flow: add and commit. The push line, well, <em>wow</em>. What even is that?</p>
+<p>The <code>git subtree split</code> part lets you split your repo into two: adding one folder to a different branch then the one you're currently on. The idea is that the <code>output</code> folder belongs to the <code>gh-pages</code> branch, but everything else lives on <code>master</code>. So that line is pushing the splitted subtree on <code>master</code> to the <code>gh-pages</code> branch. All the weird syntax just serves to formalize that mapping. I simply adapted that line which was written by someone much smarter than me (<a href="https://github.com/JamesIves/github-pages-deploy-action/blob/master/entrypoint.sh#L77">original source</a>).</p>
+            </div>
+
+            <div class="clear"></div>
+            <footer>
+                <p>
+                <a href="https://github.com/jody-frankowski/blue-penguin">Blue Penguin</a> Theme
+                &middot;
+                Powered by <a href="http://getpelican.com">Pelican</a>
+                &middot;
+                <a href="../feeds/all.atom.xml" rel="alternate">Atom Feed</a>
+            </footer>
+        </div>
+        <div class="clear"></div>
+    </div>
+</body>
+</html>

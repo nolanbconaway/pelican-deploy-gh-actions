@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Pelican GH Action Deploy Demo | Theme setup</title>
+    <link rel="shortcut icon" type="image/png" href="../favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
+    <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Pelican GH Action Deploy Demo Full Atom Feed" />
+    <link rel="stylesheet" href="../theme/css/screen.css" type="text/css" />
+    <link rel="stylesheet" href="../theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../theme/css/print.css" type="text/css" media="print" />
+    <meta name="generator" content="Pelican" />
+    <meta name="description" content="" />
+    <meta name="author" content="Nolan Conaway" />
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="../">Home</a></li>
+                <li><a href="../pages/deployment-on-github-pages.html">Deployment on Github Pages</a></li>
+                <li><a href="../pages/initial-site-setup.html">Initial Site Setup</a></li>
+                <li class="selected"><a href="../pages/theme-setup.html">Theme setup</a></li>
+            </ul>
+        </nav>
+        <div class="header_box">
+            <h1><a href="../">Pelican GH Action Deploy Demo</a></h1>
+        </div>
+    </header>
+    <div id="wrapper">
+        <div id="content">
+            <div class="page">
+                <h1>Theme setup</h1>
+                <p>As of now, the built-in theming utilities for pelican are weirdly dependent on files and folders external to the site repo. For example, the <code>pelican-themes</code> tool allows you to install themes to an external directory (e.g., <code>~/pelican-themes</code>), which you then reference using the <code>THEME</code> variable in your settings file like <code>THEME = '~/pelican-themes/theme</code>.</p>
+<p>This is problematic for a Github deployment, since you'll need to install the theme in the same spot when deploying. Here's one way to do it.</p>
+<h2>Install the theme to your repo</h2>
+<p>The approach I am going to take is to store the theme at the top level directory of your repo. During deployment we can install to the same place and it should all come together nicely.</p>
+<p>I am going to use a theme within the large collection of pelican themes available <a href="https://github.com/getpelican/pelican-themes">here</a>. </p>
+<p>Clone the whole repo to a folder at the top level of your repo:</p>
+<div class="highlight"><pre><span></span>git clone --recursive https://github.com/getpelican/pelican-themes themes
+</pre></div>
+
+
+<p>Make sure to add that folder to <code>.gitignore</code>, you don't want git tracking those files.</p>
+<div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s1">&#39;\n# pelican themes folder \nthemes/&#39;</span> &gt;&gt; .gitignore
+</pre></div>
+
+
+<h2>Set the theme path in your settings</h2>
+<p>I chose the <code>blue-penguin</code> theme, and set it in <code>pelicanconf.py</code>, so the file looks like:</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*- #</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
+
+<span class="n">AUTHOR</span> <span class="o">=</span> <span class="s1">&#39;Nolan Conaway&#39;</span>
+<span class="n">SITENAME</span> <span class="o">=</span> <span class="s1">&#39;Pelican GH Action Deploy Demo&#39;</span>
+<span class="n">SITEURL</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+<span class="n">PATH</span> <span class="o">=</span> <span class="s1">&#39;content&#39;</span>
+
+<span class="n">TIMEZONE</span> <span class="o">=</span> <span class="s1">&#39;America/New_York&#39;</span>
+
+<span class="n">DEFAULT_LANG</span> <span class="o">=</span> <span class="s1">&#39;en&#39;</span>
+
+<span class="c1"># Feed generation is usually not desired when developing</span>
+<span class="n">FEED_ALL_ATOM</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">CATEGORY_FEED_ATOM</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">TRANSLATION_FEED_ATOM</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">AUTHOR_FEED_ATOM</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">AUTHOR_FEED_RSS</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="n">DEFAULT_PAGINATION</span> <span class="o">=</span> <span class="bp">False</span>
+
+<span class="c1"># Uncomment following line if you want document-relative URLs when developing</span>
+<span class="c1"># RELATIVE_URLS = True</span>
+
+<span class="n">THEME</span> <span class="o">=</span> <span class="s1">&#39;themes/blue-penguin&#39;</span>
+</pre></div>
+
+
+<h2>Deployment</h2>
+<p>In the main.workflow file, you can see I added a theme install action like</p>
+<div class="highlight"><pre><span></span><span class="k">action</span><span class="w"> </span><span class="ss">&quot;Theme Install&quot;</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;git clone --recursive https://github.com/getpelican/pelican-themes themes&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="n">uses</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;jefftriplett/python-actions@master&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="n">needs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n">&quot;Pipenv&quot;</span><span class="o">]</span><span class="w"></span>
+<span class="err">}</span><span class="w"></span>
+</pre></div>
+
+
+<p>Deployment is dependent on that action, so the themes should be in place.</p>
+            </div>
+
+            <div class="clear"></div>
+            <footer>
+                <p>
+                <a href="https://github.com/jody-frankowski/blue-penguin">Blue Penguin</a> Theme
+                &middot;
+                Powered by <a href="http://getpelican.com">Pelican</a>
+                &middot;
+                <a href="../feeds/all.atom.xml" rel="alternate">Atom Feed</a>
+            </footer>
+        </div>
+        <div class="clear"></div>
+    </div>
+</body>
+</html>
